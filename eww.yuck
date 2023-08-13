@@ -1,0 +1,172 @@
+(defwindow mybar
+	:windowtype "dock"
+	:wm-ignore false
+	:geometry (geometry
+				:width "95%" ; this doesn't work... :(
+				:anchor "top center")
+	:reserve (struts :side "top" :distance "4%")
+	(bar))
+
+(defwidget bar []
+	(centerbox
+		:class "bar-main"
+		:orientation "horizontal"
+		:space-evenly true
+		:hexpand false
+		(workspaces :names active-workspaces :current-idx current-workspace-index)
+		(box) ;(cwindow)
+		(info)))
+
+
+; ..:: RIGHT: SYSTEM INFO ::..
+
+(defwidget info []
+	(box
+		:class "side-stuff"
+		:halign "end"
+		:space-evenly false
+		:spacing "20"
+		:hexpand false
+		(sep)
+		(box
+			:class "sys-info"
+			:space-evenly true
+			:spacing "15"
+			(_volume :volume volume)
+			(_backlight :brightness brightness-level)
+			(_network :strength net-strength :name net-name)
+			(_battery :status {EWW_BATTERY.BAT0.status} :battery {EWW_BATTERY.BAT0.capacity}))
+		(sep)
+		(box
+			:spacing "15"
+			:class "time"
+			(_time))
+		(sep)
+		(buttons)))
+
+(defwidget _volume [volume]
+	(box
+		:tooltip "${volume}"
+		(label :text {volume <= 0 ? "󰝟 " :
+			volume < 33 ? "󰕿 " :
+				volume < 66 ? "󰖀 " :
+					volume < 99 ? "󰕾 " : "󱄡 "})))
+
+(defwidget _backlight [brightness]
+	(box
+		:tooltip "${brightness}"
+		(label :text "󰃟 ")))
+
+(defwidget _network [strength name]
+	(box
+		:tooltip "${name} (${strength})"
+		(label :text {strength == "" ? "󰤮 " :
+			strength < 26 ? "󰤟 " :
+				strength < 51 ? "󰤢 " :
+					strength < 76 ? "󰤥 " : "󰤨 "})))
+
+(defwidget _battery [status battery]
+	(box
+		:tooltip "${EWW_BATTERY.BAT0.capacity}%"
+		:class {battery < 20 ? "alert" : "regular"} 
+		(label :text {status == 'Charging' ? "󰂄" :
+			battery < 20 ? "󰁻" :
+				battery < 40 ? "󰁽" :
+					battery < 60 ? "󰁿" :
+						battery < 80 ? "󰂁" : "󰁹"})))
+
+(defwidget _time []
+	(box
+		:tooltip "${today}"
+		:spacing "15"
+		:halign "center"
+		(label :text "${time}")))
+
+(defwidget buttons []
+	(box
+		:space-evenly true
+		:spacing "15"
+		:halign "end" :valign "center"
+		:hexpand true :vexpand true
+		(box (button :onclick `i3-msg exit` "󰍃 "))
+		(box (button :onclick `reboot` " "))
+		(box (button :onclick `shutdown now` " "))))
+
+
+; ..:: CENTER ::..
+
+; don't know what to put here...
+(defwidget cwindow [?name]
+	(box
+		:halign "center"
+		(label :text "hello, world")))
+
+
+; ..:: LEFT: ::..
+
+; nope:
+; i3-msg -t get_workspaces
+; i3-msg -t subscribe -m '[ "workspace" ]' | jq | grep num > tmp.txt
+; yep:
+; xprop -spy -root _NET_DESKTOP_NAMES
+; xprop -spy -root _NET_CURRENT_DESKTOP
+
+(defwidget workspaces [names current-idx]
+	(box
+		:halign "start"
+		:space-evenly true
+		:spacing "12"
+		(box
+			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "1" ? "active-workspace" : "regular"}
+			(label :text {names =~ `"1"` ? "" : ""}))
+		(box
+			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "2" ? "active-workspace" : "regular"}
+			(label :text {names =~ `"2"` ? "" : ""}))
+		(box
+			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "3" ? "active-workspace" : "regular"}
+			(label :text {names =~ `"3"` ? "" : ""}))
+		(box
+			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "4" ? "active-workspace" : "regular"}
+			(label :text {names =~ `"4"` ? "" : ""}))
+		(box
+			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "5" ? "active-workspace" : "regular"}
+			(label :text {names =~ `"5"` ? "" : ""}))
+		(box
+			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "6" ? "active-workspace" : "regular"}
+			(label :text {names =~ `"6"` ? "" : ""}))
+		(box
+			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "7" ? "active-workspace" : "regular"}
+			(label :text {names =~ `"7"` ? "" : ""}))
+		(box
+			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "8" ? "active-workspace" : "regular"}
+			(label :text {names =~ `"8"` ? "" : ""}))
+		(box
+			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "9" ? "active-workspace" : "regular"}
+			(label :text {names =~ `"9"` ? "" : ""}))
+		; (label :class {names[current] == "0" ? "active-workspace" : "regular"} :text {names =~ `"0"` ? "" : ""}) ; <--- 0 doesn't work :(
+		(sep)))
+
+
+; ..:: UTILITIES ::..
+
+(defwidget sep [] (box (label :class "sep" :text "|")))
+
+(deflisten active-workspaces :initial "N/A" "xprop -spy -root _NET_DESKTOP_NAMES")
+(deflisten current-workspace-index :initial "N/A" `xprop -spy -root _NET_CURRENT_DESKTOP`)
+
+; get active window name... still didn't figure it out
+; (deflisten :initial "N/A" "")
+
+(defpoll brightness-level :interval "5s" :initial "N/A" "scripts/getbright.sh")
+
+; it'd be nice if it was a deflisten...
+(defpoll volume :interval "1s" :initial "N/A" "scripts/getvol.sh")
+
+(defpoll today :interval "1h" :initial "N/A" "date +'%a %d %b %Y'")
+
+(defpoll time :interval "5s" :initial "N/A" "date +'%H:%M'")
+
+(defpoll net-name :interval "60s" :initial "N/A" "nmcli -t -f NAME c show --active | head -n 1")
+
+(defpoll net-strength :interval "5s" :initial `N/A`
+	`nmcli -t -f SIGNAL,ACTIVE device wifi | awk -F':' '{if($2=="yes")print$1}'`)

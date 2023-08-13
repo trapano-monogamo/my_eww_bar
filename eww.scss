@@ -1,0 +1,40 @@
+* {
+	all: unset; //Unsets everything so you can style everything from scratch
+}
+
+//Global Styles
+.bar-main {
+	background-color: rgba(28, 32, 34, 0.9);
+	color: #b0b4bc;
+	margin: 15px;
+	padding: 10px;
+	border-radius: 15;
+}
+
+.sep {
+	color: rgba(200, 200, 200, 0.5);
+}
+
+.sys-info {
+	padding-left: 10px;
+	padding-right: 0px;
+}
+
+.time {
+	font-weight: bold;
+	padding-right: 20px;
+}
+
+.alert {
+	color: #ff0000;
+}
+
+.regular {
+}
+
+.active-workspace {
+	background-size: contain;
+	background-color: rgba(150, 150, 150, 0.5);
+	border-radius: 10;
+	padding: 5px;
+}
