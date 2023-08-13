@@ -50,7 +50,7 @@
 			(revealer
 				:reveal toggle
 				:transition {transition ?: "slideright"}
-				:duration {duration ?: "50ms"}
+				:duration {duration ?: "100ms"}
 				(children :nth 1)))))
 
 (defvar volume-visible false)
