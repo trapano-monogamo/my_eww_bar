@@ -4,11 +4,26 @@
 
 //Global Styles
 .bar-main {
-	background-color: rgba(28, 32, 34, 0.9);
+	// background-color: rgba(28, 32, 34, 0.0);
+	background-size: contain;
 	color: #b0b4bc;
 	margin: 15px;
 	padding: 10px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
 	border-radius: 15;
+}
+
+.bar-section {
+	background-color: rgba(200, 200, 200, 0.0);
+	border-radius: 15;
+}
+
+.empty-space {
+	background-color: rgba(28, 32, 34, 0.0);
+	color: rgba(28, 32, 34, 0.0);
+	margin-left: 1200px;
+	margin-right: 1200px;
 }
 
 .sep {
@@ -26,10 +41,11 @@
 }
 
 .alert {
-	color: #ff0000;
+	color: #aa5555;
 }
 
 .regular {
+	padding: 5px;
 }
 
 .active-workspace {

@@ -2,20 +2,20 @@
 	:windowtype "dock"
 	:wm-ignore false
 	:geometry (geometry
-				:width "95%" ; this doesn't work... :(
+				:width "99%" ; this doesn't work... :(
 				:anchor "top center")
-	:reserve (struts :side "top" :distance "4%")
+	:reserve (struts :side "top" :distance "10%")
 	(bar))
 
 (defwidget bar []
 	(centerbox
 		:class "bar-main"
 		:orientation "horizontal"
-		:space-evenly true
 		:hexpand false
-		(workspaces :names active-workspaces :current-idx current-workspace-index)
-		(box) ;(cwindow)
-		(info)))
+		:space-evenly false
+		(box :class "bar-section" (workspaces :names active-workspaces :current-idx current-workspace-index))
+		(box)
+		(box :class "bar-section" (info))))
 
 
 ; ..:: RIGHT: SYSTEM INFO ::..
@@ -26,8 +26,7 @@
 		:halign "end"
 		:space-evenly false
 		:spacing "20"
-		:hexpand false
-		(sep)
+		:css "* {margin-right: 20px; margin-right: 20px;}"
 		(box
 			:class "sys-info"
 			:space-evenly true
@@ -46,7 +45,9 @@
 
 (defwidget _volume [volume]
 	(box
+		:hexpand false
 		:tooltip "${volume}"
+		:class {volume > 100 ? "alert" : "regular"}
 		(label :text {volume <= 0 ? "󰝟 " :
 			volume < 33 ? "󰕿 " :
 				volume < 66 ? "󰖀 " :
@@ -54,11 +55,13 @@
 
 (defwidget _backlight [brightness]
 	(box
+		:hexpand false
 		:tooltip "${brightness}"
 		(label :text "󰃟 ")))
 
 (defwidget _network [strength name]
 	(box
+		:hexpand false
 		:tooltip "${name} (${strength})"
 		(label :text {strength == "" ? "󰤮 " :
 			strength < 26 ? "󰤟 " :
@@ -67,6 +70,7 @@
 
 (defwidget _battery [status battery]
 	(box
+		:hexpand false
 		:tooltip "${EWW_BATTERY.BAT0.capacity}%"
 		:class {battery < 20 ? "alert" : "regular"} 
 		(label :text {status == 'Charging' ? "󰂄" :
@@ -77,17 +81,18 @@
 
 (defwidget _time []
 	(box
+		:hexpand false
+		:halign "center"
 		:tooltip "${today}"
 		:spacing "15"
-		:halign "center"
 		(label :text "${time}")))
 
 (defwidget buttons []
 	(box
+		:halign "end"
+		:hexpand false
 		:space-evenly true
 		:spacing "15"
-		:halign "end" :valign "center"
-		:hexpand true :vexpand true
 		(box (button :onclick `i3-msg exit` "󰍃 "))
 		(box (button :onclick `reboot` " "))
 		(box (button :onclick `shutdown now` " "))))
@@ -96,10 +101,11 @@
 ; ..:: CENTER ::..
 
 ; don't know what to put here...
-(defwidget cwindow [?name]
+(defwidget empty []
 	(box
+		:class "empty-space"
 		:halign "center"
-		(label :text "hello, world")))
+		(label :text "hello world")))
 
 
 ; ..:: LEFT: ::..
@@ -114,8 +120,10 @@
 (defwidget workspaces [names current-idx]
 	(box
 		:halign "start"
-		:space-evenly true
+		:hexpand false
+		:space-evenly false
 		:spacing "12"
+		:css "* {margin-left: 20px; margin-right: 20px;}"
 		(box
 			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "1" ? "active-workspace" : "regular"}
 			(label :text {names =~ `"1"` ? "" : ""}))
@@ -142,14 +150,12 @@
 			(label :text {names =~ `"8"` ? "" : ""}))
 		(box
 			:class {replace(captures(names, "\"[0-9]\"")[captures(current-idx, "[0-9]")[0][0]][0], "\"", "") == "9" ? "active-workspace" : "regular"}
-			(label :text {names =~ `"9"` ? "" : ""}))
-		; (label :class {names[current] == "0" ? "active-workspace" : "regular"} :text {names =~ `"0"` ? "" : ""}) ; <--- 0 doesn't work :(
-		(sep)))
+			(label :text {names =~ `"9"` ? "" : ""}))))
 
 
 ; ..:: UTILITIES ::..
 
-(defwidget sep [] (box (label :class "sep" :text "|")))
+(defwidget sep [] (box :hexpand false (label :class "sep" :text "|")))
 
 (deflisten active-workspaces :initial "N/A" "xprop -spy -root _NET_DESKTOP_NAMES")
 (deflisten current-workspace-index :initial "N/A" `xprop -spy -root _NET_CURRENT_DESKTOP`)
