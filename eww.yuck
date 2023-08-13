@@ -12,10 +12,12 @@
 		:class "bar-main"
 		:orientation "horizontal"
 		:hexpand false
-		:space-evenly false
-		(box :class "bar-section" (workspaces :names active-workspaces :current-idx current-workspace-index))
-		(box)
-		(box :class "bar-section" (info))))
+		:space-evenly true
+		(workspaces :names active-workspaces :current-idx current-workspace-index)
+		(time-date)
+		; (box :class "bar-section" (info))
+		(info) ; <------------- the background occupies all the right side, from the time to the end of the screen
+		))
 
 
 ; ..:: RIGHT: SYSTEM INFO ::..
@@ -25,67 +27,87 @@
 		:class "side-stuff"
 		:halign "end"
 		:space-evenly false
-		:spacing "20"
-		:css "* {margin-right: 20px; margin-right: 20px;}"
+		:spacing "25"
 		(box
-			:class "sys-info"
-			:space-evenly true
-			:spacing "15"
+			:space-evenly false
+			:spacing "10"
 			(_volume :volume volume)
 			(_backlight :brightness brightness-level)
-			(_network :strength net-strength :name net-name)
 			(_battery :status {EWW_BATTERY.BAT0.status} :battery {EWW_BATTERY.BAT0.capacity}))
-		(sep)
-		(box
-			:spacing "15"
-			:class "time"
-			(_time))
+			(_network :strength net-strength :name net-name)
 		(sep)
 		(buttons)))
 
+(defvar eww "eww -c $HOME/.config/eww")
+
+(defwidget revealer-on-hover [toggle togglename ?transition ?duration]
+	(eventbox
+		:onhover "${eww} update ${togglename}=true"
+		:onhoverlost "${eww} update ${togglename}=false"
+		(box
+			:space-evenly false
+			(children :nth 0)
+			(revealer
+				:reveal toggle
+				:transition {transition ?: "slideright"}
+				:duration {duration ?: "50ms"}
+				(children :nth 1)))))
+
+(defvar volume-visible false)
 (defwidget _volume [volume]
 	(box
 		:hexpand false
-		:tooltip "${volume}"
 		:class {volume > 100 ? "alert" : "regular"}
-		(label :text {volume <= 0 ? "󰝟 " :
-			volume < 33 ? "󰕿 " :
-				volume < 66 ? "󰖀 " :
-					volume < 99 ? "󰕾 " : "󱄡 "})))
+		(revealer-on-hover
+			:toggle volume-visible
+			:togglename "volume-visible"
+			(label :text {volume <= 0 ? "󰝟 " :
+				volume < 33 ? "󰕿 " :
+					volume < 66 ? "󰖀 " :
+						volume < 99 ? "󰕾 " : "󱄡 "})
+			(label :text "${volume}%"))))
 
+(defvar backlight-visible false)
 (defwidget _backlight [brightness]
 	(box
 		:hexpand false
-		:tooltip "${brightness}"
-		(label :text "󰃟 ")))
+		:class "regular"
+		(revealer-on-hover
+			:toggle backlight-visible
+			:togglename "backlight-visible"
+			(label :text "󰃟 ")
+			(label :text "${brightness}%"))))
 
-(defwidget _network [strength name]
-	(box
-		:hexpand false
-		:tooltip "${name} (${strength})"
-		(label :text {strength == "" ? "󰤮 " :
-			strength < 26 ? "󰤟 " :
-				strength < 51 ? "󰤢 " :
-					strength < 76 ? "󰤥 " : "󰤨 "})))
-
+(defvar battery-visible false)
 (defwidget _battery [status battery]
 	(box
 		:hexpand false
-		:tooltip "${EWW_BATTERY.BAT0.capacity}%"
 		:class {battery < 20 ? "alert" : "regular"} 
-		(label :text {status == 'Charging' ? "󰂄" :
-			battery < 20 ? "󰁻" :
-				battery < 40 ? "󰁽" :
-					battery < 60 ? "󰁿" :
-						battery < 80 ? "󰂁" : "󰁹"})))
+		(revealer-on-hover
+			:toggle battery-visible
+			:togglename "battery-visible"
+			(label :text {status == 'Charging' ? "󰂄" :
+				battery < 20 ? "󰁻" :
+					battery < 40 ? "󰁽" :
+						battery < 60 ? "󰁿" :
+							battery < 80 ? "󰂁" : "󰁹"})
+			(label :text "${battery}%"))))
 
-(defwidget _time []
+(defvar network-visible false)
+(defwidget _network [strength name]
 	(box
 		:hexpand false
-		:halign "center"
-		:tooltip "${today}"
-		:spacing "15"
-		(label :text "${time}")))
+		:vexpand true
+		:class "regular"
+		(revealer-on-hover
+			:toggle network-visible
+			:togglename "network-visible"
+			:ransition "slidedown"
+			(label :text {strength == "" ? "󰤮 " :
+				strength < 26 ? "󰤟 " :
+					strength < 51 ? "󰤢 " :
+						strength < 76 ? "󰤥 " : "󰤨 "})
+			(label :text "${name} (${strength})"))))
 
 (defwidget buttons []
 	(box
@@ -100,12 +122,14 @@
 
 ; ..:: CENTER ::..
 
-; don't know what to put here...
-(defwidget empty []
+(defwidget time-date []
 	(box
-		:class "empty-space"
 		:halign "center"
-		(label :text "hello world")))
+		:space-evenly false
+		:spacing "15"
+		(label :text "${today}")
+		(sep)
+		(label :text "${time}")))
 
 
 ; ..:: LEFT: ::..
@@ -121,7 +145,7 @@
 	(box
 		:halign "start"
 		:hexpand false
-		:space-evenly false
+		:space-evenly true
 		:spacing "12"
 		:css "* {margin-left: 20px; margin-right: 20px;}"
 		(box

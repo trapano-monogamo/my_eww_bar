@@ -4,35 +4,20 @@
 
 //Global Styles
 .bar-main {
-	// background-color: rgba(28, 32, 34, 0.0);
-	background-size: contain;
 	color: #b0b4bc;
 	margin: 15px;
 	padding: 10px;
 	margin-bottom: 0px;
 	padding-bottom: 0px;
-	border-radius: 15;
 }
 
 .bar-section {
-	background-color: rgba(200, 200, 200, 0.0);
+	background-color: rgba(200, 200, 200, 0.5);
 	border-radius: 15;
-}
-
-.empty-space {
-	background-color: rgba(28, 32, 34, 0.0);
-	color: rgba(28, 32, 34, 0.0);
-	margin-left: 1200px;
-	margin-right: 1200px;
 }
 
 .sep {
 	color: rgba(200, 200, 200, 0.5);
-}
-
-.sys-info {
-	padding-left: 10px;
-	padding-right: 0px;
 }
 
 .time {
@@ -42,15 +27,17 @@
 
 .alert {
 	color: #aa5555;
+	padding: 5px;
 }
 
 .regular {
+	color: #b0b4bc;
 	padding: 5px;
 }
 
 .active-workspace {
-	background-size: contain;
-	background-color: rgba(150, 150, 150, 0.5);
+	background-color: rgba(150, 150, 150, 0.4);
 	border-radius: 10;
-	padding: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
