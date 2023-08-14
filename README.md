@@ -1,3 +1,3 @@
 # Minimalist Nord EWW Bar
 
-![screenshot](./screenshot.png)
+![screenshot](./screenshots/1.png)
